@@ -1,6 +1,6 @@
 package com.knight.entity.user;
 
-import org.springframework.data.jpa.domain.AbstractPersistable;
+import com.wonders.xlab.framework.entity.AbstractBaseEntity;
 
 import javax.persistence.Entity;
 import javax.persistence.Table;
@@ -11,7 +11,7 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name = "user_basic")
-public class User extends AbstractPersistable<Long> {
+public class User extends AbstractBaseEntity<Long> {
 
     private String account;
 

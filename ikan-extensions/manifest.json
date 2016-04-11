@@ -14,10 +14,11 @@
     "chrome_style": true,
     "page": "options.html"
   },
+  "incognito":"spanning",
   "icons": {
     "128": "image/icon.png"
   },
-  "permissions":["storage","browserAction","runtime","tabs"],
+  "permissions":["storage","browserAction","runtime","tabs","privacy"],
 
   "content_scripts": [
     {

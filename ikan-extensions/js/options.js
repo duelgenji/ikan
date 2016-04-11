@@ -73,9 +73,29 @@ function test4(){
     json.password = $("#password").val();
 
     $.ajax({
-        url : "http://172.16.76.19:8080/user/iklogin",
+        url : "http://172.16.76.19:8080/user/login",
         type:"post",
         data:json,
+        success:function(result){
+            if(result.success){
+                chrome.browserAction.setIcon({path:"image/icon3.png"});
+                localStorage.act = result.accessToken;
+                getIKA();
+            }else{
+                alert(result.message);
+            }
+        }
+    });
+
+}
+
+
+function getIKA(){
+    $.ajax({
+        url : "http://172.16.76.19:8080/user/getIkanAccount",
+        type:"post",
+        data:{"website":1},
+        headers: {accessToken: localStorage.act ? localStorage.act:""},
         success:function(result){
             if(result.success){
                 chrome.browserAction.setIcon({path:"image/icon2.png"});
@@ -84,11 +104,9 @@ function test4(){
                     chrome.tabs.sendMessage(tabs[0].id,result, function(response) {});
                 });
             }else{
-                alert("login fail!");
+                alert(result.message);
             }
         }
     });
-
 }
-
 

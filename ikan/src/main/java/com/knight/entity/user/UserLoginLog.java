@@ -1,7 +1,6 @@
 package com.knight.entity.user;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import org.springframework.data.jpa.domain.AbstractPersistable;
+import com.wonders.xlab.framework.entity.AbstractBaseEntity;
 
 import javax.persistence.*;
 
@@ -10,12 +9,10 @@ import javax.persistence.*;
  * Created by knight on 16/4/8.
  */
 @Entity
-@Table(name = "user_basic")
-public class UserLoginLog extends AbstractPersistable<Long> {
+@Table
+public class UserLoginLog extends AbstractBaseEntity<Long> {
 
-    @OneToOne(fetch = FetchType.LAZY, optional = false)
-    @PrimaryKeyJoinColumn
-    @JsonIgnore
+    @ManyToOne(fetch = FetchType.LAZY)
     private User user;
 
     private String ipAddress;

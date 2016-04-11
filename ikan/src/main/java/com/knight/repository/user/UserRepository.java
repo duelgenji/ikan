@@ -8,4 +8,10 @@ import com.wonders.xlab.framework.repository.MyRepository;
  */
 public interface UserRepository extends MyRepository<User, Long> {
 
+    User findByAccount(String account);
+
+    User findByAccountAndPasswordAndRemoved(String account,String password,boolean isRemoved);
+
+    User findByAccessToken(String accessToken);
+
 }
