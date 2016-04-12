@@ -16,8 +16,32 @@ $(document).ready(function(){
     $("#t3").on("click",function(){
         test3();
     });
-    $("#t4").on("click",function(){
-        test4();
+    $("#login").on("click",function(){
+        login();
+    });
+    $("#youku").on("click",function(){
+        getIKA(0);
+        window.open("http://www.youku.com");
+    });
+    $("#tudou").on("click",function(){
+        getIKA(0);
+        window.open("http://www.tudou.com");
+    });
+    $("#iqiyi").on("click",function(){
+        getIKA(1);
+        window.open("http://www.iqiyi.com");
+    });
+    $("#qq").on("click",function(){
+        getIKA(2);
+        window.open("http://v.qq.com");
+    });
+    $("#sohu").on("click",function(){
+        getIKA(3);
+        window.open("http://tv.sohu.com");
+    });
+    $("#le").on("click",function(){
+        getIKA(4);
+        window.open("http://www.le.com");
     });
 });
 function save_options() {
@@ -65,22 +89,30 @@ function test3(){
     // chrome.cookies.getAllCookieStores(function (e){
     //     console.log(e.size());
     // });
+    chrome.windows.getAll(function(windows){
+        console.log(windows);
+        for(var i in windows){
+            if(windows[i].incognito){
+                console.log("wid:"+windows[i].id);
+            }
+        }
+    });
 }
-function test4(){
+function login(){
 
     var json = {};
     json.account = $("#account").val();
     json.password = $("#password").val();
 
     $.ajax({
-        url : "http://172.16.76.19:8080/user/login",
+        url : "http://115.28.176.74:8080/ikan/user/login",
         type:"post",
         data:json,
         success:function(result){
             if(result.success){
                 chrome.browserAction.setIcon({path:"image/icon3.png"});
-                localStorage.act = result.accessToken;
-                getIKA();
+                chrome.storage.local.set({'act': result.accessToken});
+                // localStorage.act = result.accessToken;
             }else{
                 alert(result.message);
             }
@@ -90,23 +122,28 @@ function test4(){
 }
 
 
-function getIKA(){
-    $.ajax({
-        url : "http://172.16.76.19:8080/user/getIkanAccount",
-        type:"post",
-        data:{"website":1},
-        headers: {accessToken: localStorage.act ? localStorage.act:""},
-        success:function(result){
-            if(result.success){
-                chrome.browserAction.setIcon({path:"image/icon2.png"});
-                chrome.storage.local.set({'ikan': JSON.stringify(result)});
-                chrome.tabs.query({url:["*://*.youku.com/*","*://*.le.com/*","*://*.qq.com/*","*://*.sohu.com/*","*://*.tudou.com/*","*://*.iqiyi.com/*"]}, function(tabs){
-                    chrome.tabs.sendMessage(tabs[0].id,result, function(response) {});
-                });
-            }else{
-                alert(result.message);
+function getIKA(type){
+    var act = "";
+    chrome.storage.local.get("act", function(e) {
+        act = e.act;
+        $.ajax({
+            url : "http://115.28.176.74:8080/ikan/user/getIkanAccount",
+            type:"post",
+            data:{"website":type},
+            headers: {accessToken: act },
+            success:function(result){
+                if(result.success){
+                    chrome.browserAction.setIcon({path:"image/icon2.png"});
+                    chrome.storage.local.set({'ikan': JSON.stringify(result)});
+                    chrome.tabs.query({url:["*://*.youku.com/*","*://*.le.com/*","*://*.qq.com/*","*://*.sohu.com/*","*://*.tudou.com/*","*://*.iqiyi.com/*"]}, function(tabs){
+                        chrome.tabs.sendMessage(tabs[0].id,result, function(response) {});
+                    });
+                }else{
+                    alert(result.message);
+                }
             }
-        }
+        });
     });
+
 }
 

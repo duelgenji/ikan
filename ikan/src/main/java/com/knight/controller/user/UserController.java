@@ -1,7 +1,9 @@
 package com.knight.controller.user;
 
+import com.knight.entity.account.VideoAccount;
 import com.knight.entity.user.User;
 import com.knight.entity.user.UserLoginLog;
+import com.knight.repository.account.VideoAccountRepository;
 import com.knight.repository.user.UserLoginLogRepository;
 import com.knight.repository.user.UserRepository;
 import org.apache.commons.codec.digest.DigestUtils;
@@ -28,6 +30,9 @@ public class UserController {
 
     @Autowired
     UserLoginLogRepository userLoginLogRepository;
+
+    @Autowired
+    VideoAccountRepository videoAccountRepository;
 
 
     /**
@@ -179,21 +184,24 @@ public class UserController {
         User user = userRepository.findByAccessToken(accessToken);
 
         if(user!=null){
-            user.setAccessToken("");
-            user.setAccessTime(0);
-            userRepository.save(user);
+            Date now = new Date();
+            SimpleDateFormat sdf = new SimpleDateFormat("HHmmssSSS");
+            List<VideoAccount> videoAccounts = videoAccountRepository.findByWebsiteType(VideoAccount.WebsiteType.values()[website]);
+
+            if(videoAccounts.size()>0){
+                VideoAccount videoAccount =  videoAccounts.get(0);
+                res.put("success",1);
+                res.put("account",videoAccount.getAccount());
+                res.put("password",videoAccount.getPassword());
+                res.put("websiteType",videoAccount.getWebsiteType().ordinal());
+            }
         }else{
             res.put("success",0);
             res.put("message","请重新登陆!");
             return res;
         }
 
-        Date now = new Date();
-        SimpleDateFormat sdf = new SimpleDateFormat("HHmmssSSS");
 
-        res.put("success",1);
-        res.put("account",sdf.format(now)+"@qq.com");
-        res.put("password","12345678");
 
         return res;
     }

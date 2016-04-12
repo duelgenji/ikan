@@ -1,22 +1,28 @@
 var ikan_account = "";
 var ikan_pwd = "";
-$(document).ready(function() {
+var incognito = false;
 
-    chrome.storage.local.get("ikan", function(e) {
-        var ikan = eval("("+ e.ikan +")");
-        ikan_account = ikan.account;
-        ikan_pwd = ikan.password;
-        writeAccpwd();
-    });
 
-    chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
-        var ikan = request;
-        ikan_account = ikan.account;
-        ikan_pwd = ikan.password;
-        writeAccpwd();
-    });
 
+chrome.storage.local.get("ikanincognito", function(e) {
+    incognito = e.ikanincognito;
+    if(incognito){
+        chrome.storage.local.get("ikan", function(e) {
+            var ikan = eval("("+ e.ikan +")");
+            ikan_account = ikan.account;
+            ikan_pwd = ikan.password;
+            writeAccpwd();
+        });
+
+        chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
+            var ikan = request;
+            ikan_account = ikan.account;
+            ikan_pwd = ikan.password;
+            writeAccpwd();
+        });
+    }
 });
+
 
 function writeAccpwd(){
 
@@ -34,10 +40,10 @@ function writeAccpwd(){
     }else if(hostname.match("iqiyi")){
         //iqiyi
         $("input[data-loginbox-elem='emailInput']").val(ikan_account);
-        $("input[data-loginbox-elem='passwdInput']").val(ikan_account);
+        $("input[data-loginbox-elem='passwdInput']").val(ikan_pwd);
         $(document).on("focus",".in-txt",function(){
             $("input[data-loginbox-elem='emailInput']").val(ikan_account);
-            $("input[data-loginbox-elem='passwdInput']").val(ikan_account);
+            $("input[data-loginbox-elem='passwdInput']").val(ikan_pwd);
         })
 
     }else if(hostname.match("tudou")){
