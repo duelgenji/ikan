@@ -4,6 +4,59 @@
     <title>My Test Extension Options</title>
     <script src="js/jquery.js"></script>
     <script src="js/options.js"></script>
+    <style>
+        body{
+            background-color: #F9F9F5;
+        }
+        .container{
+            width: 1000px;
+            margin : 0 auto;
+            text-align: center;
+            padding-top: 150px;
+        }
+
+        .logo{
+            font-family: monospace;
+        }
+
+        .step1 div{
+            margin-top: 8px;
+        }
+
+        .step1 input{
+            border-radius: 3px;
+            border: 1px solid #ddd;
+            padding: 5px;
+        }
+        .step1 #login,.step2 #logout{
+            padding: 8px 16px;
+            border-radius: 2px;
+            border-color: #fff;
+            border: 0;
+            background-color:  rgba(208,255,220,1);
+        }
+
+        .web_list{
+
+            margin : 0 auto;
+            width: 500px;
+            margin-left: 300px;
+        }
+
+        .web{
+            float: left;
+            width: 33.333333333333%;
+            height: 50px;
+            line-height: 50px;
+            text-align: left;
+            cursor: pointer;
+        }
+
+        .web:hover{
+            background-color: rgba(208,255,220,0.5);
+        }
+
+    </style>
 </head>
 
 <body>
@@ -19,19 +72,47 @@
 <!--<button id="t1">t1</button>-->
 <!--<button id="t2">t2</button>-->
 <!--<button id="t3">t3</button>-->
-賬號:<input type="text" id="account" />
-密碼:<input type="password" id="password" />
-<button id="login">登陸</button>
+<div class="container">
+    <h1 class="logo">IKAN</h1>
 
-<br>
-<br>
-<br>
-<button id="youku">優酷</button>
-<button id="iqiyi">愛奇藝</button>
-<button id="tudou">土豆</button>
-<button id="sohu">搜狐</button>
-<button id="qq">騰訊</button>
-<button id="le">樂視</button>
+    <div class="step1">
+        <div>
+            <label for="account">賬號: </label><input type="text" id="account" />
+        </div>
+        <div>
+            <label for="password">密碼: </label><input type="password" id="password" />
+        </div>
+        <div>
+            <button id="login">會員登陸</button>
+        </div>
+    </div>
+
+    <div class="step2" style="display: none;">
+        <div>
+            <span>歡迎回來,</span><span id="name"></span>  <button id="logout">會員登出</button>
+        </div>
+
+
+        <h3 style="padding-top: 25px;">
+            選擇站點
+        </h3>
+        <div class="web_list">
+
+            <div class="web" id="youku"><img src="image/youku.jpeg"> <span>優酷網</span></div>
+            <div class="web" id="iqiyi"><img src="image/iqiyi.jpeg"> <span>愛奇藝</span></div>
+            <div class="web" id="tudou"><img src="image/tudou.jpeg"> <span>土豆網</span></div>
+            <div class="web" id="sohu"><img src="image/sohu.jpeg"> <span>搜狐視頻</span></div>
+            <div class="web" id="qq"><img src="image/qq.jpeg"> <span>騰訊視頻</span></div>
+            <div class="web" id="le"><img src="image/letv.jpeg"> <span>樂視網</span></div>
+        </div>
+    </div>
+
+
+
+</div>
+
+
+
 <br/>
 
 </body>

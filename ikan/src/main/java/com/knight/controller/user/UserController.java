@@ -95,6 +95,7 @@ public class UserController {
             user.setAccessTime(new Date().getTime() + (long) 365 * 24 * 60 * 60 * 1000);
             userRepository.save(user);
             res.put("accessToken", user.getAccessToken());
+            res.put("name", user.getAccount());
 
             UserLoginLog userLoginLog = new UserLoginLog();
             userLoginLog.setUser(user);
@@ -106,7 +107,6 @@ public class UserController {
             res.put("message", "账号密码错误");
             return res;
         }
-
 
         res.put("success",1);
         return res;
@@ -200,8 +200,6 @@ public class UserController {
             res.put("message","请重新登陆!");
             return res;
         }
-
-
 
         return res;
     }

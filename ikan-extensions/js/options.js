@@ -1,133 +1,119 @@
 
+var baseUrl = "http://115.28.176.74:8080/ikan/";
+// var baseUrl = "http://172.16.76.19:8080/";
+
 $(document).ready(function(){
 
+    checkLoginStatus();
 
-    restore_options();
-
-    $("#save").on("click",function(){
-        save_options();
-    });
-    $("#t1").on("click",function(){
-        test1();
-    });
-    $("#t2").on("click",function(){
-        test2();
-    });
-    $("#t3").on("click",function(){
-        test3();
-    });
     $("#login").on("click",function(){
         login();
     });
+    $("#logout").on("click",function(){
+        logout();
+    });
+
     $("#youku").on("click",function(){
-        getIKA(0);
-        window.open("http://www.youku.com");
+        getIKA(0,"http://www.youku.com");
     });
     $("#tudou").on("click",function(){
-        getIKA(0);
-        window.open("http://www.tudou.com");
+        getIKA(0,"http://www.tudou.com");
     });
     $("#iqiyi").on("click",function(){
-        getIKA(1);
-        window.open("http://www.iqiyi.com");
+        getIKA(1,"http://www.iqiyi.com");
     });
     $("#qq").on("click",function(){
-        getIKA(2);
-        window.open("http://v.qq.com");
+        getIKA(2,"http://v.qq.com");
     });
     $("#sohu").on("click",function(){
-        getIKA(3);
-        window.open("http://tv.sohu.com");
+        getIKA(3,"http://tv.sohu.com");
     });
     $("#le").on("click",function(){
-        getIKA(4);
-        window.open("http://www.le.com");
+        getIKA(4,"http://www.le.com");
     });
+
+
+    $("#account,#password").on("keydown",function(event) {
+        if(event.keyCode==13){
+            $("#login").click();
+        }
+    });
+
+
 });
-function save_options() {
-    var select = document.getElementById("color");
-    var color = select.children[select.selectedIndex].value;
-    localStorage["favorite_color"] = color;
-    // Update status to let user know options were saved.
-    var status = document.getElementById("status");
-    status.innerHTML = "Options Saved.";
-    setTimeout(function() {
-        status.innerHTML = "";
-    }, 750);
-}
-// Restores select box state to saved value from localStorage.
-function restore_options() {
 
-    var favorite = localStorage["favorite_color"];
-    if (!favorite) {
-        return;
-    }
-    var select = document.getElementById("color");
-    for (var i = 0; i < select.children.length; i++) {
-        var child = select.children[i];
-        if (child.value == favorite) {
-            child.selected = "true";
-            break;
-        }
-    }
-}
-
-function test1(){
-    // chrome.windows.getAll(false,function(e){
-    //     console.log(e.size());
-    // });
-    // chrome.windows.getLastFocused(function(e){
-    //     console.log(e);
-    // })
-}
-function test2(){
-    // chrome.tabs.getCurrent(function(e){
-    //     console.log(e.title);
-    // });
-}
-function test3(){
-    // chrome.cookies.getAllCookieStores(function (e){
-    //     console.log(e.size());
-    // });
-    chrome.windows.getAll(function(windows){
-        console.log(windows);
-        for(var i in windows){
-            if(windows[i].incognito){
-                console.log("wid:"+windows[i].id);
-            }
+function checkLoginStatus(){
+    chrome.storage.local.get("act", function(e) {
+        var act = e.act;
+        if(act){
+            chrome.browserAction.setIcon({path:"image/icon3.png"});
+            switchLogin(act);
         }
     });
 }
-function login(){
 
+function login(){
     var json = {};
     json.account = $("#account").val();
     json.password = $("#password").val();
 
     $.ajax({
-        url : "http://115.28.176.74:8080/ikan/user/login",
+        url : baseUrl + "user/login",
         type:"post",
         data:json,
         success:function(result){
             if(result.success){
                 chrome.browserAction.setIcon({path:"image/icon3.png"});
-                chrome.storage.local.set({'act': result.accessToken});
+                chrome.storage.local.set({'act': result});
                 // localStorage.act = result.accessToken;
+                switchLogin(result);
+
             }else{
                 alert(result.message);
             }
         }
     });
-
 }
 
 
-function getIKA(type){
+function logout(){
+    chrome.storage.local.get("act", function(e) {
+        var act = e.act.accessToken;
+        $.ajax({
+            url : baseUrl+"user/logout",
+            type:"post",
+            headers: {accessToken: act },
+            success:function(result){
+                if(result.success){
+                    chrome.browserAction.setIcon({path:"image/icons.png"});
+                    chrome.storage.local.set({'act': null});
+                    switchLogin(result,true);
+                }else{
+                    alert(result.message);
+                }
+            }
+        });
+    });
+
+}
+
+function switchLogin(obj,t){
+    if(t){
+        $(".step1").show();
+        $(".step2").hide();
+    }else{
+        $("#name").html(obj.name);
+        $(".step1").hide();
+        $(".step2").show();
+    }
+}
+
+function getIKA(type,url){
     var act = "";
     chrome.storage.local.get("act", function(e) {
-        act = e.act;
+        act = e.act.accessToken;
         $.ajax({
-            url : "http://115.28.176.74:8080/ikan/user/getIkanAccount",
+            url : baseUrl+"user/getIkanAccount",
             type:"post",
             data:{"website":type},
             headers: {accessToken: act },
@@ -138,8 +124,12 @@ function getIKA(type){
                     chrome.tabs.query({url:["*://*.youku.com/*","*://*.le.com/*","*://*.qq.com/*","*://*.sohu.com/*","*://*.tudou.com/*","*://*.iqiyi.com/*"]}, function(tabs){
                         chrome.tabs.sendMessage(tabs[0].id,result, function(response) {});
                     });
+                    window.open(url);
                 }else{
                     alert(result.message);
+                    chrome.browserAction.setIcon({path:"image/icons.png"});
+                    chrome.storage.local.set({'act': null});
+                    switchLogin(result,true);
                 }
             }
         });
