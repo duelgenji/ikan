@@ -56,3 +56,11 @@ chrome.windows.onFocusChanged.addListener(function(windowId){
         }
     });
 });
+
+
+chrome.bookmarks.getTree(function(results){
+
+    console.log(results);
+
+
+});

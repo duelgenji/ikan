@@ -17,7 +17,7 @@
   "icons": {
     "128": "image/icon.png"
   },
-  "permissions":["storage","browserAction","runtime","tabs"],
+  "permissions":["storage","browserAction","runtime","tabs","bookmarks"],
 
   "content_scripts": [
     {
