@@ -9,12 +9,11 @@ import com.knight.repository.user.UserRepository;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -202,6 +201,19 @@ public class UserController {
         }
 
         return res;
+    }
+
+
+    @RequestMapping("rewrite/{t}")
+    public void rewrite(
+            @PathVariable long t,
+            HttpServletResponse response){
+
+        try {
+            response.sendRedirect("http://zhixin.me:8080/knowheart3/wx/know_heart_test.html#qno="+t);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 
